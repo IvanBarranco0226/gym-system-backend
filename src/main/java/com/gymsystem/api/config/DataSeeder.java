@@ -1,7 +1,8 @@
 package com.gymsystem.api.config;
 
-import com.gymsystem.api.model.User;
-import com.gymsystem.api.repository.UserRepository;
+import com.gymsystem.api.user.User;
+import com.gymsystem.api.user.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;

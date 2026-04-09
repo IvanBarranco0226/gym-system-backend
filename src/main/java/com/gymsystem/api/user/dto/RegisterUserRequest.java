@@ -1,4 +1,4 @@
-package com.gymsystem.api.dto;
+package com.gymsystem.api.user.dto;
 
 import lombok.Data;
 

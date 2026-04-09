@@ -1,10 +1,4 @@
-package com.gymsystem.api.controller;
-
-import com.gymsystem.api.dto.AuthResponse;
-import com.gymsystem.api.dto.LoginRequest;
-import com.gymsystem.api.dto.RegisterUserRequest;
-import com.gymsystem.api.model.User;
-import com.gymsystem.api.service.UserService;
+package com.gymsystem.api.user;
 
 import jakarta.validation.Valid;
 
@@ -12,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.gymsystem.api.auth.dto.AuthResponse;
+import com.gymsystem.api.auth.dto.LoginRequest;
 import com.gymsystem.api.security.JwtUtil;
+import com.gymsystem.api.user.dto.RegisterUserRequest;
+
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -56,4 +54,11 @@ public class UserController {
             return ResponseEntity.status(401).body(e.getMessage());
         }
     }
+
+    @GetMapping("/dashboard-stats")
+    public ResponseEntity<String> getDashboardStatus() {
+        // Si la petición llega hasta aquí, significa que el JWT es válido
+        return ResponseEntity.ok("{\"clientesActivos\": 150, \"instructores\": 5}");
+    }
+    
 } 

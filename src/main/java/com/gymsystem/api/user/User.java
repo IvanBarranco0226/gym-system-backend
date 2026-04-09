@@ -1,4 +1,4 @@
-package com.gymsystem.api.model;
+package com.gymsystem.api.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

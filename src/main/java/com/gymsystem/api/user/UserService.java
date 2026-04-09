@@ -1,9 +1,8 @@
-package com.gymsystem.api.service;
+package com.gymsystem.api.user;
 
-import com.gymsystem.api.dto.LoginRequest;
-import com.gymsystem.api.dto.RegisterUserRequest;
-import com.gymsystem.api.model.User;
-import com.gymsystem.api.repository.UserRepository;
+import com.gymsystem.api.auth.dto.LoginRequest;
+import com.gymsystem.api.user.dto.RegisterUserRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
 package com.gymsystem.api.user;
 
+import com.gymsystem.api.ApiApplication;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.gymsystem.api.auth.dto.AuthResponse;
@@ -20,10 +22,14 @@ import com.gymsystem.api.user.dto.EmployeeResponse;
 import com.gymsystem.api.user.dto.RegisterEmployeeRequest;
 import com.gymsystem.api.user.dto.RegisterUserRequest;
 import com.gymsystem.api.user.dto.UpdateEmployeeRequest;
+import com.gymsystem.api.user.dto.UpdatePasswordRequest;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -33,11 +39,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5173"})
 public class UserController {
 
+    private final ApiApplication apiApplication;
+
     @Autowired
     private UserService userService;
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    UserController(ApiApplication apiApplication) {
+        this.apiApplication = apiApplication;
+    }
 
     // El endpoint para dar de alta. Más adelante le pondremos:
     // @PreAUtorize("hasRole('ADMIN')")
@@ -62,7 +74,8 @@ public class UserController {
             // 2. Preparamos la respuesta segura sin contraseña, puro token
             AuthResponse response = new AuthResponse(token,
                                     loggedInUser.getEmail(),
-                                    loggedInUser.getRoleId()
+                                    loggedInUser.getRoleId(),
+                                    loggedInUser.isNeedsPasswordChange()
             );
 
             return ResponseEntity.ok(response);
@@ -118,6 +131,21 @@ public class UserController {
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "Empleado actualizado exitosamente.");
+        response.put("status", "success");
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody UpdatePasswordRequest request) {
+        // Obtenemos el correo directamente del token verificado
+        // El usuario no puede falsificar esto porque el token está firmado criptográficamente.apiApplication
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        userService.updateFirstPassword(userEmail, request.getNewPassword());
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Contraseña actualizada exitosamente.");
         response.put("status", "success");
 
         return ResponseEntity.ok(response);

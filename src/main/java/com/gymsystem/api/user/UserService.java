@@ -1,6 +1,7 @@
 package com.gymsystem.api.user;
 
 import com.gymsystem.api.auth.dto.LoginRequest;
+import com.gymsystem.api.security.EmailService;
 import com.gymsystem.api.user.dto.EmployeeResponse;
 import com.gymsystem.api.user.dto.RegisterEmployeeRequest;
 import com.gymsystem.api.user.dto.RegisterUserRequest;
@@ -19,11 +20,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
+    private final EmailService emailService;
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    UserService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     public User registerNewUser(RegisterUserRequest request) {
         // Regla de negocio 1: Verificar que el email no este en uso
@@ -75,6 +82,7 @@ public class UserService {
         newUser.setPhone(request.getPhone());
         newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         newUser.setRoleId(request.getRoleId());
+        newUser.setNeedsPasswordChange(true);
 
         // 3. Construímos el objeto perfil datos laborales
         EmployeeProfile profile = new EmployeeProfile();
@@ -91,7 +99,9 @@ public class UserService {
         // 5. Guardamos todo con una sola instruccón
         // Gracias a CascadeType.ALL, al guardar el usuario se guarda el perfil
         // automáticamente
-        return userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
+        emailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getFirstName(), request.getPassword());
+        return savedUser;
     }
 
     public List<EmployeeResponse> getAllEmployees() {
@@ -151,6 +161,22 @@ public class UserService {
         }
 
         // 5. Guardamos los cambios
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateFirstPassword(String email, String newPassword) {
+        // 1. Buscamos al usuario basado en el correo que extrajimos del Token
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // 2. Encriptamos la nueva contraseña
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+
+        // 3. Apagamos la bandera: ya no le pediremos cambiarla en el futuro
+        user.setNeedsPasswordChange(false);
+
+        // 4. Guardamos
         userRepository.save(user);
     }
 }

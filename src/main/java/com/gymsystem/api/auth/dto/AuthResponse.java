@@ -9,4 +9,5 @@ public class AuthResponse {
     private String token;
     private String email;
     private Integer roleId;
+    private boolean needsPasswordChange;
 }

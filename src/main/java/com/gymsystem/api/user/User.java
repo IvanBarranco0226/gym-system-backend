@@ -14,6 +14,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
+    // Relación uno a uno con el perfil del empleado
+    // mappedBy indica que el dueño de la relación es EmployeeProfile
+    // cascade = CascadeType.ALL -> Si borro el usuario, se borra su perfil
+    // fetch = FetchType.LAZY -> No cargues el perfil hasta que lo necesites (Optimización)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private EmployeeProfile employeeProfile;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -23,6 +31,15 @@ public class User {
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "first_name", length = 100)
+    private String firstName;
+
+    @Column(name = "last_name", length = 100)
+    private String lastName;
+
+    @Column(name = "phone", length = 20)
+    private String phone;
 
     @Column(name = "role_id", nullable = false)
     private Integer roleId;

@@ -1,4 +1,4 @@
-package com.gymsystem.api.user.dto;
+package com.gymsystem.api.Employee.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

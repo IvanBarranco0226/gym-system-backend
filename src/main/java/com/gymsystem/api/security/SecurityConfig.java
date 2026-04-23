@@ -38,7 +38,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/admin/users/login").permitAll() // Única ruta publica
+                .requestMatchers("/api/auth/login").permitAll() 
                 .requestMatchers("/error").permitAll()
                 .anyRequest().authenticated()
             )
@@ -47,16 +47,15 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 2. Definimos las reglas exactas de quién y cómo puede entrar
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Autorizamos estrictamente el puerto que usa vite en tu pc de escritorio
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173"));
+        // Permitimos cualquier origen durante las pruebas para evitar problemas con la IP de WSL
+        configuration.addAllowedOriginPattern("*");
         // Qué verbos HTTP permitimos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Qué cabeceras permitimos que nos mande el frontend (vital para enviar contraseñas y futuros tokens)
+        // Qué cabeceras permitimos que nos mande el frontend
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         // Permitimos el envío de credenciales
         configuration.setAllowCredentials(true);

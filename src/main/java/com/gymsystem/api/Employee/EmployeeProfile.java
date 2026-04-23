@@ -1,8 +1,10 @@
-package com.gymsystem.api.user;
+package com.gymsystem.api.Employee;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+
+import com.gymsystem.api.user.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

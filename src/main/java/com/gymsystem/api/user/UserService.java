@@ -1,11 +1,11 @@
 package com.gymsystem.api.user;
 
-import com.gymsystem.api.auth.dto.LoginRequest;
+import com.gymsystem.api.Employee.EmployeeProfile;
+import com.gymsystem.api.Employee.dto.EmployeeResponse;
+import com.gymsystem.api.Employee.dto.RegisterEmployeeRequest;
+import com.gymsystem.api.Employee.dto.UpdateEmployeeRequest;
 import com.gymsystem.api.security.EmailService;
-import com.gymsystem.api.user.dto.EmployeeResponse;
-import com.gymsystem.api.user.dto.RegisterEmployeeRequest;
 import com.gymsystem.api.user.dto.RegisterUserRequest;
-import com.gymsystem.api.user.dto.UpdateEmployeeRequest;
 
 import jakarta.transaction.Transactional;
 
@@ -48,22 +48,6 @@ public class UserService {
         newUser.setRoleId(request.getRoleId());
 
         return userRepository.save(newUser);
-    }
-
-    public User loginUser(LoginRequest request) {
-        // 1. Buscamos al usuario. Si no existe, lanzamos error genérico por seguridad
-        // (no dar pistas)
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
-
-        // 2. Comparamos la contraseña en texto plano con el hash de la BD
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Credenciales inválidas");
-        }
-
-        // Si pasa, devolvemos el usuario (EL controlador se encargará de ocultar el
-        // hash)
-        return user;
     }
 
     @Transactional
@@ -161,22 +145,6 @@ public class UserService {
         }
 
         // 5. Guardamos los cambios
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public void updateFirstPassword(String email, String newPassword) {
-        // 1. Buscamos al usuario basado en el correo que extrajimos del Token
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // 2. Encriptamos la nueva contraseña
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
-
-        // 3. Apagamos la bandera: ya no le pediremos cambiarla en el futuro
-        user.setNeedsPasswordChange(false);
-
-        // 4. Guardamos
         userRepository.save(user);
     }
 }

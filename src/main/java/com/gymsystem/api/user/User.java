@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.gymsystem.api.Employee.EmployeeProfile;
+
 @Entity
 @Table(name = "users")
 @Data

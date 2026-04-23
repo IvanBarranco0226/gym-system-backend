@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DataSeeder implements CommandLineRunner{
-    
+public class DataSeeder implements CommandLineRunner {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -19,10 +19,9 @@ public class DataSeeder implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
-        // Verificamos si el admin maestro ya existe para no duplicarlo
         String adminEmail = "admin@gym.com";
 
-        if (userRepository.findByEmail(adminEmail).isEmpty()){
+        if (userRepository.findByEmail(adminEmail).isEmpty()) {
             User admin = new User();
             admin.setEmail(adminEmail);
             // NUnca gyardamos texto plano, usamos nuestro Bcrypt

@@ -12,6 +12,23 @@ jobs:
   build:
     runs-on: ubuntu-latest # Le pedimos a GitHub que nos preste un servidor Linux vacío
 
+    # Le pedimos a GitHub que levante un Postgres temporal junto a nuestro código
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: gym_system
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Onepiece159
+        ports:
+          - 5432:5432
+        # Esto asegura que GitHub espere a que la base de datos esté lista antes de seguir
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     # A. Clonar tu código en ese servidor prestado
     - name: Check out the code
@@ -30,4 +47,12 @@ jobs:
 
     # D. ¡El momento de la verdad! Compilar el código y correr pruebas
     - name: Build with Maven
+      env:
+        DB_USER: postgres
+        DB_PASSWORD: Onepiece159
+        JWT_SECRET: EsteEsUnSecretoMuyLargoParaFirmarLosTokensDelGimnasioDevSecOps2026
+        MAIL_HOST: smtp.falso.com
+        MAIL_PORT: 587
+        MAIL_USERNAME: test-user
+        MAIL_PASSWORD: test-password
       run: ./mvnw clean package

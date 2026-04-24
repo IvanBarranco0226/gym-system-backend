@@ -6,11 +6,24 @@ services:
     environment:
       POSTGRES_DB: gym_system         
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Onepiece159 
+      POSTGRES_PASSWORD: Onepiece159
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: .                 # Le dice a Docker: "Busca un Dockerfile aquí y constrúyelo"
+    container_name: gym-system-api
+    ports:
+      - "8080:8080"          # Mapea el puerto para que puedas usar Postman/React en Windows
+    depends_on:
+      - db                   # Le dice: "No arranques hasta que la BD esté encendida"
+    env_file:
+      - .env                 # Le pasamos tus credenciales y JWT secret
+    environment:
+      # TRUCO DEVSECOPS: Sobrescribimos la URL para que no apunte a "localhost" sino al contenedor "db"
+      DB_URL: jdbc:postgresql://db:5432/gym_system
 
 volumes:
   postgres_data:

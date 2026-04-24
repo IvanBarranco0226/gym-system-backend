@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.util.UUID;
 
+import com.gymsystem.api.user.User;
+
 @Entity
 @Table(name = "client_profiles")
 @Data
@@ -13,14 +15,19 @@ public class ClientProfile {
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name = "last_name", nullable = false)
-    private String lastName; 
+    @Column(name = "pin", length = 10)
+    private String pin;
 
-    @Column(name = "numeric_code", unique = true, length = 50)
-    private String numericCode;
+    @Column(name = "phone", length = 15)
+    private String phone;
+
+    @Column(name = "emergency_contact", length = 15)
+    private String emergencyContact;
 
     @Column(name = "is_active")
     private Boolean isActive; 

@@ -3,9 +3,9 @@ spring:
     name: gym-system-api
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/gym_system
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/gym_system}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:Onepiece159}
     driver-class-name: org.postgresql.Driver
 
   jpa:
